@@ -1,0 +1,32 @@
+The Doc - Table of Contents
+
+
+-- MySQL Table/View Creation --
+
+    Raw Scraped Data Tables
+
+    Analytical Tables: Base Tables
+
+    Analytical Tables: Counting Stat Tables
+
+    Analytical Tables: Rate Stat Tables
+
+    Prediction & Betting Tracking Tables
+
+
+
+-- Python Scripts --
+
+    MLBAM, BaseballSavant, and SportsbookReview.com Daily Scrapes
+
+    mySQL Analytical Table Backfill Scripts
+
+    Predicative Model: Dataset Generation & Preprocessing
+
+    Predicative Model: Modelling & Model Validation/Scoring
+
+    Predicative Model: Prediction Generation
+
+-- Linux Shell Scripts --
+
+mysqldump -u root -p --comments --dump-date --force --tab=/Volumes/the_doc/mysql_databasedump/ mlb

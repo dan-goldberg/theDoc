@@ -1,0 +1,19 @@
+pitch fields
+
+{'break_y', 'on_3b', 'on_2b', 'y', 'y0', 'pfx_z', 'break_angle', 'start_speed', 'event_num', 'mt', 'x', 'az', 'ay', 'id', 'px', 'cc', 'pitch_type', 'tfs', 'tfs_zulu', 'pz', 'z0', 'des', 'break_length', 'on_1b', 'ax', 'end_speed', 'type', 'spin_rate', 'vz0', 'sz_bot', 'pfx_x', 'vx0', 'x0', 'des_es', 'play_guid', 'nasty', 'vy0', 'sz_top', 'type_confidence', 'spin_dir', 'zone', 'sv_id'}
+
+atbat fields
+
+{'event2', 'away_team_runs', 'event_num', 'stand', 'o', 's', 'des', 'home_team_runs', 'event2_es', 'b_height', 'p_throws', 'num', 'score', 'start_tfs', 'b', 'start_tfs_zulu', 'des_es', 'pitcher', 'play_guid', 'event', 'batter', 'event_es'}
+
+action fields
+
+{'player', 'tfs', 'tfs_zulu', 'des', 'play_guid', 'home_team_runs', 'event', 'away_team_runs', 'event_num', 'b', 'pitch', 'event_es', 'o', 's', 'des_es'}
+
+po fields
+
+{'catcher', 'event_num', 'des', 'play_guid', 'des_es'}
+
+runner fields
+
+{'start', 'score', 'earned', 'rbi', 'event', 'event_num', 'id', 'end'}

@@ -1,0 +1,11 @@
+game fields
+
+{'type', 'game_pk', 'game_time_et', 'local_game_time', 'gameday_sw'}
+
+team fields
+
+{'name_full', 'id', 'abbrev', 'name_brief', 'name', 'division_id', 'file_code', 'l', 'w', 'league', 'type', 'league_id', 'code'}
+
+stadium fields
+
+{'id', 'venue_w_chan_loc', 'location', 'name'}
