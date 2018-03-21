@@ -1,1 +1,4 @@
 *.DS_STORE
+*pfx_scrapes/*
+*.ipynb_checkpoints*
+settings.py

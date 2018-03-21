@@ -1,22 +1,21 @@
+import forecastio
+import numpy as np
+import re
+import sys
+import os
+import datetime
+import time
+import mysql.connector
+import mysql
+import math
+from theDoc.utils import emailSend
+from theDoc.database import mlb_analtablesupdate as mlbtab
+from theDoc import settings
 
-# coding: utf-8
-
-# In[112]:
 
 def forecastio_datapull(target_gids):
 
-    import forecastio
-    import mlb_analtablesupdate as mlbtab
-    import numpy as np
-    import re
-    import sys
-    import os
-    import datetime
-    import time
-    import mysql.connector
-    import mysql
-    import emailSend
-    import math
+
 
     cnx = mlbtab.mlb_connect()
     curA = cnx.cursor()
@@ -148,7 +147,7 @@ def forecastio_datapull(target_gids):
     pull_date = datetime.datetime.now().date()
 
     game_columns_string = (', '.join(game_attrlist+weather_attrlist+derived_attrlist)+'\n')
-    game_outfile=open("/Users/dangoldberg/PFX_Scrapes/forecastio_data_table___"+str(pull_date)+".csv", "w+", encoding='utf-8')
+    game_outfile=open("{}/forecastio_data_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pull_date)), "w+", encoding='utf-8')
     if os.stat(game_outfile.name).st_size==0: game_outfile.write(game_columns_string)                    
 
     resultmsg = ''
@@ -259,7 +258,7 @@ def forecastio_datapull(target_gids):
     cnx.close()
 
     pastday = datetime.datetime.now().date() - datetime.timedelta(days=data_storage_days)
-    past_gamefile = "/Users/dangoldberg/PFX_Scrapes/forecastio_data_table___"+str(pastday)+".csv"
+    past_gamefile = "{}/forecastio_data_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
 
     csvstore_delete(past_gamefile)
 
