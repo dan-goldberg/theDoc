@@ -18,7 +18,8 @@ import datetime
 import time
 import mysql.connector
 import mysql
-import emailSend
+from theDoc.utils import emailSend
+from theDoc import settings
 
 def collectXMLAttrs(parent, target):
     attrs_list = []
@@ -270,11 +271,11 @@ NL_div_dic = {"E":"204","C":"205","W":"203"}
 active_date = datetime.datetime.now().date() #- datetime.timedelta(days=1)
 
 game_columns_string = (', '.join(game_attrlist)+'\n')
-game_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_game_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+game_outfile=open("{}/pfx_game_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(game_outfile.name).st_size==0: game_outfile.write(game_columns_string)                    
 
 prob_columns_string = (', '.join(prob_columns)+'\n')
-prob_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_prob_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+prob_outfile=open("{}/pfx_prob_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(prob_outfile.name).st_size==0: prob_outfile.write(prob_columns_string)                    
     
 resultmsg = ''
@@ -469,8 +470,8 @@ cnx.close()
 #print('status - mySQL DB connection closed')
 
 pastday = datetime.datetime.now().date() - datetime.timedelta(days=data_storage_days)
-past_gamefile = "/Users/dangoldberg/PFX_Scrapes/pfx_game_table___"+str(pastday)+".csv"
-past_probfile = "/Users/dangoldberg/PFX_Scrapes/pfx_prob_table___"+str(pastday)+".csv"
+past_gamefile = "{}/pfx_game_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_probfile = "{}/pfx_prob_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
 
 
 csvstore_delete(past_gamefile)

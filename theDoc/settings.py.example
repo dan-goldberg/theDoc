@@ -1,0 +1,8 @@
+# PFX scrape file location
+PFX_SCRAPE_PATH = '/path/to/pfx_scrapes'
+
+# autoemail notifications
+EMAIL_FROM = 'autoemail_source@server.com'
+EMAIL_TO = 'destination@server.com'
+EMAIL_PWD = 'your-password'
+EMAIL_SERVER = 'smtp.gmail.com:587'

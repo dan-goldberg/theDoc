@@ -1,15 +1,13 @@
-
-# coding: utf-8
-
-# In[2]:
+import smtplib
+from theDoc import settings
 
 def emailSend(msg='test',
                subject='test',
-               fromaddr='dgoldberg.autoemails@gmail.com',
-               toaddrs='dgoldberg48@gmail.com',
-               username='dgoldberg.autoemails@gmail.com',
-               password='Gmail1Gberg99',
-               servername='smtp.gmail.com:587'
+               fromaddr = settings.EMAIL_FROM,
+               toaddrs = settings.EMAIL_TO,
+               username = settings.EMAIL_FROM,
+               password = settings.EMAIL_PWD,
+               servername = settings.EMAIL_SERVER
                ):
     
     messege = "\r\n".join([
@@ -20,7 +18,6 @@ def emailSend(msg='test',
     msg
     ])
     
-    import smtplib
     server = smtplib.SMTP(servername)
     server.ehlo()
     server.starttls()

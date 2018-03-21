@@ -18,7 +18,10 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 from io import StringIO 
-import emailSend
+from theDoc.utils import emailSend
+from theDoc import settings
+
+
 
 def collectXMLAttrs(parent, target):
     attrs_list = []
@@ -399,27 +402,27 @@ baseballsavant_attrs = [
 
 
 action_columns_string = (', '.join(game_attrs)+","+', '.join(inning_attrs)+","+', '.join(action_attrs)+'\n')
-action_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_action_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+action_outfile=open("{}/pfx_action_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(action_outfile.name).st_size==0: action_outfile.write(action_columns_string)                    
 
 atbat_columns_string = (', '.join(game_attrs)+","+', '.join(inning_attrs)+","+', '.join(atbat_attrs)+'\n')
-atbat_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_atbat_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+atbat_outfile=open("{}/pfx_atbat_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(atbat_outfile.name).st_size==0: atbat_outfile.write(atbat_columns_string)    
 
 pitch_columns_string = (', '.join(game_attrs)+","+', '.join(inning_attrs)+","+', '.join(absub_attrs)+","+', '.join(pitchpre_attrs)+","+', '.join(pitch_attrs)+'\n')
-pitch_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_pitch_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+pitch_outfile=open("{}/pfx_pitch_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(pitch_outfile.name).st_size==0: pitch_outfile.write(pitch_columns_string)    
 
 runner_columns_string = (', '.join(game_attrs)+","+', '.join(inning_attrs)+","+', '.join(absub_attrs)+","+', '.join(runner_attrs)+'\n')
-runner_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_runner_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+runner_outfile=open("{}/pfx_runner_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(runner_outfile.name).st_size==0: runner_outfile.write(runner_columns_string)    
 
 pickoff_columns_string = (', '.join(game_attrs)+","+', '.join(inning_attrs)+","+', '.join(absub_attrs)+","+', '.join(pickoff_attrs)+'\n')
-pickoff_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_pickoff_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+pickoff_outfile=open("{}/pfx_pickoff_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(pickoff_outfile.name).st_size==0: pickoff_outfile.write(pickoff_columns_string)
 
 ms_columns_string = (', '.join(ms_det_attrlist)+"," +','+', '.join(ms_game_attrlist)+"," +','+ ', '.join(ms_gamestatus_attrlist)+"," +','+ ', '.join(ms_runs_attrlist) + '\n')
-miniscore_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_miniscore_table___"+str(active_date)+".csv", "w+", encoding='utf-8')
+miniscore_outfile=open("{}/pfx_miniscore_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
 if os.stat(miniscore_outfile.name).st_size==0: miniscore_outfile.write(ms_columns_string)                    
 
 resultmsg = ''
@@ -574,7 +577,7 @@ bs_file = bsCreateFile(bs_url,3)
 
 try:
     bs_df = bs_file[baseballsavant_attrs]
-    bs_file_name = "/Users/dangoldberg/PFX_Scrapes/pfx_baseballsavant___"+str(active_date)+".csv"
+    bs_file_name = "{}/pfx_baseballsavant___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date))
     bs_df.to_csv(bs_file_name, index=False, quoting=1)
 
     time.sleep(2)
@@ -638,13 +641,13 @@ cnx.close()
 
 pastday = active_date - datetime.timedelta(days=data_storage_days)
 
-past_actionfile = "/Users/dangoldberg/PFX_Scrapes/pfx_action_table___"+str(pastday)+".csv"
-past_atbatfile = "/Users/dangoldberg/PFX_Scrapes/pfx_atbat_table___"+str(pastday)+".csv"
-past_pitchfile = "/Users/dangoldberg/PFX_Scrapes/pfx_pitch_table___"+str(pastday)+".csv"
-past_runnerfile = "/Users/dangoldberg/PFX_Scrapes/pfx_runner_table___"+str(pastday)+".csv"
-past_pickofffile = "/Users/dangoldberg/PFX_Scrapes/pfx_pickoff_table___"+str(pastday)+".csv"
-past_miniscorefile = "/Users/dangoldberg/PFX_Scrapes/pfx_miniscore_table___"+str(pastday)+".csv"
-past_baseballsavant = "/Users/dangoldberg/PFX_Scrapes/pfx_baseballsavant___"+str(pastday)+".csv"
+past_actionfile = "{}/pfx_action_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_atbatfile = "{}/pfx_atbat_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_pitchfile = "{}/pfx_pitch_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_runnerfile = "{}/pfx_runner_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_pickofffile = "{}/pfx_pickoff_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_miniscorefile = "{}/pfx_miniscore_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
+past_baseballsavant = "{}/pfx_baseballsavant___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
 
 csvstore_delete(past_actionfile)
 csvstore_delete(past_atbatfile)

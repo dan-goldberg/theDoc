@@ -18,10 +18,11 @@ import mysql.connector
 import numpy as np
 import pandas as pd 
 from io import StringIO 
-import emailSend
-from forecastio_datapull import forecastio_datapull
-from betting_scrape_func import betting_scrape
-from theDoc_inference_func import run_inference
+from theDoc.utils import emailSend
+from theDoc.scrapes.forecastio_datapull import forecastio_datapull
+from theDoc.scrapes.betting_scrape_func import betting_scrape
+from theDoc.inference.theDoc_inference_func import run_inference
+from theDoc import settings
 
 '''old_stdout = sys.stdout
 output_text = StringIO()
@@ -245,10 +246,10 @@ player_attrs = [
 
 player_columns_string = (', '.join(game_attrs)+","+', '.join(player_attrs)+'\n')
 
-player_outfile=open("/Users/dangoldberg/PFX_Scrapes/pfx_player_table___"+str(datetime.datetime.now())+".csv", "w+", encoding='utf-8')
+player_outfile=open("{}/pfx_player_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(datetime.datetime.now())), "w+", encoding='utf-8')
 if os.stat(player_outfile.name).st_size==0: player_outfile.write(player_columns_string)                    
 
-player_outfile2=open("/Users/dangoldberg/PFX_Scrapes/pfx_player_table___"+str(active_date)+".csv", "a+", encoding='utf-8')
+player_outfile2=open("{}/pfx_player_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "a+", encoding='utf-8')
 if os.stat(player_outfile2.name).st_size==0: player_outfile2.write(player_columns_string)                    
 
 resultmsg = ''
@@ -351,7 +352,7 @@ if affectedrows > 0:
 csvstore_delete(player_outfile.name)
 
 pastday = active_date - datetime.timedelta(days=data_storage_days)
-past_playerfile = "/Users/dangoldberg/PFX_Scrapes/pfx_player_table___"+str(pastday)+".csv"
+past_playerfile = "{}/pfx_player_table___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
 csvstore_delete(past_playerfile)
 
 #print('status - csv deleted')

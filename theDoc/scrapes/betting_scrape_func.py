@@ -18,9 +18,9 @@ import mysql.connector
 import numpy as np
 import pandas as pd 
 from io import StringIO 
-import emailSend
-from staticVars import internetcheck_ip
 import ssl
+from theDoc.utils import emailSend
+from theDoc import settings
 
 
 
@@ -164,7 +164,7 @@ def betting_scrape():
 
     data_storage_days = 2
 
-    outfile=open("/Users/dangoldberg/PFX_Scrapes/mlb_betting_odds___" + str(active_date) + ".csv", "w+", encoding='utf-8')
+    outfile=open("{}/mlb_betting_odds___{}.csv".format(settings.PFX_SCRAPE_PATH, str(active_date)), "w+", encoding='utf-8')
     if os.stat(outfile.name).st_size==0: outfile.write('"away_team","home_team","game_date","game_time_et","sportsbook_id","spread_away_points","spread_away_odds","spread_home_points","spread_home_odds","money_away_odds","money_home_odds","total_points","total_over_odds","total_under_odds","spread_away_points_raw","spread_away_odds_raw","spread_home_points_raw","spread_home_odds_raw","money_away_odds_raw","money_home_odds_raw","total_points_raw","total_over_odds_raw","total_under_odds_raw"\n')
 
     resultmsg = ''
@@ -364,7 +364,7 @@ def betting_scrape():
     #print('status - mySQL DB connection closed')
 
     pastday = active_date - datetime.timedelta(days=data_storage_days)
-    past_playerfile = "/Users/dangoldberg/PFX_Scrapes/mlb_betting_odds___"+str(pastday)+".csv"
+    past_playerfile = "{}/mlb_betting_odds___{}.csv".format(settings.PFX_SCRAPE_PATH, str(pastday))
     csvstore_delete(past_playerfile)
 
 
