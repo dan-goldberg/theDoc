@@ -1,4 +1,4 @@
-#!/anaconda/bin/python
+#!/anaconda/envs/theDoc/bin/python
 
 '''
 This scrpit scrapes basic game information for 

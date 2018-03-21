@@ -1,4 +1,4 @@
-#!/anaconda/bin/python
+#!/anaconda/envs/theDoc/bin/python
 
 '''
 This scrpit scrapes Sportsbookreview.com MLB betting lines for today's upcoming games,
