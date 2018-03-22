@@ -20,6 +20,7 @@ import pandas as pd
 from io import StringIO 
 from theDoc.utils import emailSend
 from theDoc import settings
+from theDoc.database import mlb_analtablesupdate as mlbtab
 
 
 
@@ -671,9 +672,6 @@ print(endmsg)
 emailmsg = '    started ' + str(script_starttime)+'\n\n'+resultmsg+'\n\n'+endmsg
 emailSend.emailSend(msg=emailmsg ,subject=sys.argv[0]+' report')
 
-
-
-import mlb_analtablesupdate as mlbtab
 
 script_starttime = datetime.datetime.now()
 

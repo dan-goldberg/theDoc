@@ -285,17 +285,24 @@ base_url = "http://gd2.mlb.com/components/game/mlb/"
 d_url = base_url+"year_"+str(active_date.year)+"/month_"+active_date.strftime('%m')+"/day_"+active_date.strftime('%d')+"/"
 #print(active_date)
 
-
 time.sleep(1)
-day_soup = createSoup(d_url, 5)
-games = day_soup.find_all("a", href=re.compile("gid_.*"))
+scoreboard_url = d_url+"scoreboard.xml"
+day_soup = createSoup(scoreboard_url, 5)
+
+games = []
+
+sg_games = day_soup.find("scoreboard").find_all("sg_game")
+for sg_game in sg_games:
+    game_xml = sg_game.find("game")
+    games.append(game_xml.attrs.get('id'))
+games = ["gid_"+gid+"/" for gid in games] #I add 'gid_' and the slash because all gid records in database have this (legacy format)
+
 num_games = len(games)
 print('    number of games - total -',num_games)
 resultmsg += '    number of games - total - '+str(num_games)+'\n'
 num_games = 0
-for gamelink in games:
+for gid in games:
     
-    gid = gamelink.get_text().strip()
     g_url = d_url+gid+"linescore.xml"
     #print(g_url)
 
