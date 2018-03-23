@@ -6,3 +6,6 @@ EMAIL_FROM = 'autoemail_source@server.com'
 EMAIL_TO = 'destination@server.com'
 EMAIL_PWD = 'your-password'
 EMAIL_SERVER = 'smtp.gmail.com:587'
+
+# pretrained_models
+MODELS_PATH = '/path/to/pretrained/models'
