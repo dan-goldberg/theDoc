@@ -18,9 +18,9 @@ import mysql.connector
 import numpy as np
 import pandas as pd 
 from io import StringIO 
-import emailSend
-from staticVars import internetcheck_ip
 import ssl
+from theDoc.utils import emailSend
+from theDoc import settings
 
 os.environ['TZ'] = 'America/New_york'
 
