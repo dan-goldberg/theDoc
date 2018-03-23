@@ -16,6 +16,8 @@ from keras.initializers import RandomNormal, RandomUniform, Ones, Zeros, Varianc
 from keras import backend as K
 from scipy.signal import convolve, correlate
 
+from theDoc import settings
+
 class DocModels:
     
     def __init__(self):
@@ -53,17 +55,17 @@ class DocModels:
         self.saved_models = {}
         
         # THE FOLLOWING MODELS COME FROM EXPERIMENT 3.0 (x4)
-        self.saved_models[1] = {'model':'not built','build_func':self.build_model_100,'weights_path':'/Users/dangoldberg/theDoc_models/1_weights.hdf5','tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
-        self.saved_models[2] = {'model':'not built','build_func':self.build_model_100,'weights_path':'/Users/dangoldberg/theDoc_models/2_weights.hdf5','tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
-        self.saved_models[3] = {'model':'not built','build_func':self.build_model_100,'weights_path':'/Users/dangoldberg/theDoc_models/3_weights.hdf5','tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
-        self.saved_models[4] = {'model':'not built','build_func':self.build_model_100,'weights_path':'/Users/dangoldberg/theDoc_models/4_weights.hdf5','tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
+        self.saved_models[1] = {'model':'not built','build_func':self.build_model_100,'weights_path':'{}/1_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
+        self.saved_models[2] = {'model':'not built','build_func':self.build_model_100,'weights_path':'{}/2_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
+        self.saved_models[3] = {'model':'not built','build_func':self.build_model_100,'weights_path':'{}/3_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
+        self.saved_models[4] = {'model':'not built','build_func':self.build_model_100,'weights_path':'{}/4_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'total'},'hyperparameters':self.hyperparameters_3_0}
         
         
         # THE FOLLOWING MODELS COME FROM EXPERIMENT 6.0 - A (x4)
-        self.saved_models[5] = {'model':'not built','build_func':self.build_model_200,'weights_path':'/Users/dangoldberg/theDoc_models/5_weights.hdf5','tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
-        self.saved_models[6] = {'model':'not built','build_func':self.build_model_200,'weights_path':'/Users/dangoldberg/theDoc_models/6_weights.hdf5','tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
-        self.saved_models[7] = {'model':'not built','build_func':self.build_model_200,'weights_path':'/Users/dangoldberg/theDoc_models/7_weights.hdf5','tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
-        self.saved_models[8] = {'model':'not built','build_func':self.build_model_200,'weights_path':'/Users/dangoldberg/theDoc_models/8_weights.hdf5','tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
+        self.saved_models[5] = {'model':'not built','build_func':self.build_model_200,'weights_path':'{}/5_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
+        self.saved_models[6] = {'model':'not built','build_func':self.build_model_200,'weights_path':'{}/6_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
+        self.saved_models[7] = {'model':'not built','build_func':self.build_model_200,'weights_path':'{}/7_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
+        self.saved_models[8] = {'model':'not built','build_func':self.build_model_200,'weights_path':'{}/8_weights.hdf5'.format(settings.MODELS_PATH),'tasks':{'money','total','spread'},'hyperparameters':self.hyperparameters_6_0}
     
     def build_savedmodel(self,n):
     
