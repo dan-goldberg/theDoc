@@ -9,11 +9,13 @@ import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import theDoc_dataset
+from theDoc.preprocessing import theDoc_dataset
 import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import mlb_analtablesupdate as mlbtab
+from theDoc.database import mlb_analtablesupdate as mlbtab
+from sklearn import preprocessing
+from theDoc.models.theDoc_models import DocModels
 
 def run_inference(inference_gids_str):
 
@@ -109,9 +111,6 @@ def run_inference(inference_gids_str):
 
     df = pd.read_csv(filename)
     os.remove(filename)
-
-
-    from sklearn import preprocessing
 
     df = df.set_index("gid",drop=False)
     df = df.loc[~df.index.duplicated(keep='last')]
@@ -398,8 +397,6 @@ def run_inference(inference_gids_str):
             else: a = np.concatenate([a,b],axis=0)
             return a
 
-
-    from theDoc_models import DocModels
 
     docModels = DocModels()
     docModels.build_allsavedmodels()
