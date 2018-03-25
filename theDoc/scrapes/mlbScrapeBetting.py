@@ -1,4 +1,4 @@
-#!/anaconda/bin/python
+#!/anaconda/envs/theDoc/bin/python
 
 '''
 This scrpit scrapes Sportsbookreview.com MLB betting lines for today's upcoming games,
@@ -18,9 +18,9 @@ import mysql.connector
 import numpy as np
 import pandas as pd 
 from io import StringIO 
-import emailSend
-from staticVars import internetcheck_ip
 import ssl
+from theDoc.utils import emailSend
+from theDoc import settings
 
 os.environ['TZ'] = 'America/New_york'
 

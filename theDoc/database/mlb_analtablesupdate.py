@@ -1650,7 +1650,8 @@ def anal_pitcher_counting_p():
         query3 = """
 
             INSERT INTO anal_pitcher_counting_p
-            SELECT DISTINCT
+            SELECT
+            DISTINCT
             @analdate + interval '1' day as anal_game_date,
             a.pitcher,
             null as player,

@@ -5,17 +5,22 @@
 
 import mysql.connector
 import sys
+import os
 import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import theDoc_dataset
-import os
+from sklearn import preprocessing
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import mlb_analtablesupdate as mlbtab
+from theDoc.preprocessing import theDoc_dataset
+from theDoc.database import mlb_analtablesupdate as mlbtab
+from theDoc.models.theDoc_models import DocModels
+from theDoc.utils import emailSend
 
 def run_inference(inference_gids_str):
+    
+    print("inference running on: {}".format(inference_gids_str))
 
     qry = theDoc_dataset.query(inference_gids_str=inference_gids_str)
 
@@ -94,6 +99,9 @@ def run_inference(inference_gids_str):
         sys.exit()
 
     cur_columns = curA.column_names
+    if len(cur_columns) == 1:
+        print('ERROR - only 1 column. Exiting inference function')
+        pass
 
     rawdata = np.array(curA.fetchall())
     print('results fetched '+str(datetime.datetime.now())+' - total time: '+str(datetime.datetime.now()-query_start))
@@ -109,9 +117,6 @@ def run_inference(inference_gids_str):
 
     df = pd.read_csv(filename)
     os.remove(filename)
-
-
-    from sklearn import preprocessing
 
     df = df.set_index("gid",drop=False)
     df = df.loc[~df.index.duplicated(keep='last')]
@@ -399,8 +404,6 @@ def run_inference(inference_gids_str):
             return a
 
 
-    from theDoc_models import DocModels
-
     docModels = DocModels()
     docModels.build_allsavedmodels()
 
@@ -626,31 +629,6 @@ def run_inference(inference_gids_str):
 
     curA.close()
     cnx.close()
-    
-    def send_email(message='test',
-                   subject='test',
-                   fromaddr='dgoldberg.autoemails@gmail.com',
-                   toaddrs='dgoldberg48@gmail.com',
-                   username='dgoldberg.autoemails@gmail.com',
-                   password='Gmail1Gberg99',
-                   servername='smtp.gmail.com:587',
-                   html=None
-                   ):
-
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = fromaddr
-        msg['To'] = toaddrs
-        htmlpart = MIMEText(html, 'html')
-        msg.attach(htmlpart)
-
-        import smtplib
-        server = smtplib.SMTP(servername)
-        server.ehlo()
-        server.starttls()
-        server.login(username,password)
-        server.sendmail(fromaddr, toaddrs, msg.as_string())
-        server.quit()
 
     emailmsg = """
     <h1> ---- SPREAD ---- </h1>
@@ -660,5 +638,5 @@ def run_inference(inference_gids_str):
     <h1> ---- MONEY ---- </h1>
     """+money_pred.to_html()
 
-    send_email(subject='INCOMING BET',html=emailmsg)
+    emailSend.emailSend(subject='INCOMING BET',msg=emailmsg)
     
