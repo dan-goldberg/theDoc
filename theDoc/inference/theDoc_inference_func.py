@@ -5,17 +5,18 @@
 
 import mysql.connector
 import sys
+import os
 import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from theDoc.preprocessing import theDoc_dataset
-import os
+from sklearn import preprocessing
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from theDoc.preprocessing import theDoc_dataset
 from theDoc.database import mlb_analtablesupdate as mlbtab
-from sklearn import preprocessing
 from theDoc.models.theDoc_models import DocModels
+from theDoc.utils import emailSend
 
 def run_inference(inference_gids_str):
     
@@ -628,31 +629,6 @@ def run_inference(inference_gids_str):
 
     curA.close()
     cnx.close()
-    
-    def send_email(message='test',
-                   subject='test',
-                   fromaddr='dgoldberg.autoemails@gmail.com',
-                   toaddrs='dgoldberg48@gmail.com',
-                   username='dgoldberg.autoemails@gmail.com',
-                   password='Gmail1Gberg99',
-                   servername='smtp.gmail.com:587',
-                   html=None
-                   ):
-
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = fromaddr
-        msg['To'] = toaddrs
-        htmlpart = MIMEText(html, 'html')
-        msg.attach(htmlpart)
-
-        import smtplib
-        server = smtplib.SMTP(servername)
-        server.ehlo()
-        server.starttls()
-        server.login(username,password)
-        server.sendmail(fromaddr, toaddrs, msg.as_string())
-        server.quit()
 
     emailmsg = """
     <h1> ---- SPREAD ---- </h1>
@@ -662,5 +638,5 @@ def run_inference(inference_gids_str):
     <h1> ---- MONEY ---- </h1>
     """+money_pred.to_html()
 
-    send_email(subject='INCOMING BET',html=emailmsg)
+    emailSend.emailSend(subject='INCOMING BET',msg=emailmsg)
     
