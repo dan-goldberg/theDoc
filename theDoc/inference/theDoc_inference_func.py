@@ -18,6 +18,8 @@ from sklearn import preprocessing
 from theDoc.models.theDoc_models import DocModels
 
 def run_inference(inference_gids_str):
+    
+    print("inference running on: {}".format(inference_gids_str))
 
     qry = theDoc_dataset.query(inference_gids_str=inference_gids_str)
 
@@ -96,6 +98,9 @@ def run_inference(inference_gids_str):
         sys.exit()
 
     cur_columns = curA.column_names
+    if len(cur_columns) == 1:
+        print('ERROR - only 1 column. Exiting inference function')
+        pass
 
     rawdata = np.array(curA.fetchall())
     print('results fetched '+str(datetime.datetime.now())+' - total time: '+str(datetime.datetime.now()-query_start))
