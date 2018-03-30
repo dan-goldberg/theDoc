@@ -17,6 +17,7 @@ from theDoc.preprocessing import theDoc_dataset
 from theDoc.database import mlb_analtablesupdate as mlbtab
 from theDoc.models.theDoc_models import DocModels
 from theDoc.utils import emailSend
+from theDoc import settings
 
 def run_inference(inference_gids_str):
     
@@ -111,7 +112,7 @@ def run_inference(inference_gids_str):
     curA.close()
     cnx.close()
 
-    filename = '/users/dangoldberg/theDoc_datasets/inference'+str(datetime.datetime.now().date())+'.csv'
+    filename = '{}/inference{}.csv'.format(settings.DATASETS_PATH, str(datetime.datetime.now().date()))
     rawdata.to_csv(filename)
     del rawdata
 
@@ -142,7 +143,7 @@ def run_inference(inference_gids_str):
 
 
 
-    temp_training_dataset = pd.read_csv('/users/dangoldberg/theDoc_datasets/completedataset20170620.csv')
+    temp_training_dataset = pd.read_csv('{}/completedataset20170620.csv'.format(settings.DATASETS_PATH))
 
     temp_training_dataset = temp_training_dataset.set_index("gid",drop=False)
     temp_training_dataset = temp_training_dataset.loc[~temp_training_dataset.index.duplicated(keep='last')]
@@ -612,9 +613,9 @@ def run_inference(inference_gids_str):
         affectedrows = cursor.rowcount
         return resultmsg, affectedrows
 
-    spreadpreds_file = "/Users/dangoldberg/theDoc_datasets/spreadpreds.csv"
-    totalpreds_file = "/Users/dangoldberg/theDoc_datasets/totalpreds.csv"
-    moneypreds_file = "/Users/dangoldberg/theDoc_datasets/moneypreds.csv"
+    spreadpreds_file = "{}/spreadpreds.csv".format(settings.DATASETS_PATH)
+    totalpreds_file = "{}/totalpreds.csv".format(settings.DATASETS_PATH)
+    moneypreds_file = "{}/moneypreds.csv".format(settings.DATASETS_PATH)
 
     spread_pred.drop("choice",axis=1).to_csv(spreadpreds_file,index=False)
     total_pred.drop("choice",axis=1).to_csv(totalpreds_file,index=False)
@@ -638,5 +639,5 @@ def run_inference(inference_gids_str):
     <h1> ---- MONEY ---- </h1>
     """+money_pred.to_html()
 
-    emailSend.emailSend(subject='INCOMING BET',msg=emailmsg)
+    emailSend.htmlEmailSend(subject='INCOMING BET',html=emailmsg)
     
