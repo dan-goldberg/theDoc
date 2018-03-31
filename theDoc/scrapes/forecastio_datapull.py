@@ -106,7 +106,7 @@ def forecastio_datapull(target_gids):
 
 
 
-    api_key = "f9ad5c1fb7320efc31a1db0ade0c27b8"
+    api_key = settings.FORECASTIO_API_KEY
 
     game_attrlist = [
         "gid",
