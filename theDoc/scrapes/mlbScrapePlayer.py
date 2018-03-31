@@ -151,7 +151,7 @@ os.environ['TZ'] = 'America/New_york'
 script_starttime = datetime.datetime.now()
 print('    started -',script_starttime)
 
-active_date = datetime.datetime.now().date()
+active_date = datetime.datetime.now().date() #- datetime.timedelta(days=1)
 
 try:
     cnx = mysql.connector.connect(user='dan', password='',
