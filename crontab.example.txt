@@ -1,0 +1,12 @@
+
+theDocEnv=/path/to/theDoc/env/bin
+thedDocPath=/path/to/theDoc/
+thedDocScrapes=$thedDocPath/scrapes
+
+30 3 * * * $theDocEnv $theDocScrapes/mlbScrapeFuture.py >> $theDocScrapes/cronlogs/mlbScrapeFuture.log 2>&1 && TZ=America/New_York echo ----- Future ----- >> $theDocScrapes/cronlogs/mlbScripts.log && TZ=America/New_York date >> $theDocScrapes/cronlogs/mlbScripts.log
+
+0 4 * * * $theDocEnv $theDocScrapes/mlbScrapePast.py >> $theDocScrapes/cronlogs/mlbScrapePast.log 2>&1 && TZ=America/New_York echo ----- Past ----- >> $theDocScrapes/cronlogs/mlbScripts.log && TZ=America/New_York date >> $theDocScrapes/cronlogs/mlbScripts.log
+
+*/15 11-22 * * * $theDocEnv $theDocScrapes/mlbScrapePlayer.py >> $theDocScrapes/cronlogs/mlbScrapePlayer.log 2>&1 && TZ=America/New_York echo -      Player ----- >> $theDocScrapes/cronlogs/mlbScripts.log && TZ=America/New_York date >> $theDocScrapes/cronlogs/mlbScripts.log
+
+30 10 * * * $theDocEnv $theDocScrapes/mlbScrapeBetting.py >> $theDocScrapes/cronlogs/mlbScrapeBetting.log 2>&1 && TZ=America/New_York echo ----- Betting ----- >> $theDocScrapes/cronlogs/mlbScripts.log && TZ=America/New_York date >> $theDocScrapes/cronlogs/mlbScripts.log
