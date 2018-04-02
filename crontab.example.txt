@@ -1,7 +1,7 @@
 
-theDocEnv=/path/to/theDoc/env/bin
-thedDocPath=/path/to/theDoc/
-thedDocScrapes=$thedDocPath/scrapes
+theDocEnv=/path/to/theDoc/env/bin/python
+theDocPath=/path/to/theDoc/python/package
+theDocScrapes=$theDocPath/scrapes
 
 30 3 * * * $theDocEnv $theDocScrapes/mlbScrapeFuture.py >> $theDocScrapes/cronlogs/mlbScrapeFuture.log 2>&1 && TZ=America/New_York echo ----- Future ----- >> $theDocScrapes/cronlogs/mlbScripts.log && TZ=America/New_York date >> $theDocScrapes/cronlogs/mlbScripts.log
 
