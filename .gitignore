@@ -1,4 +1,8 @@
 
+
+# Big Datafiles
+theDoc/datasets/*.csv
+
 *.DS_STORE
 
 *.ipynb_checkpoints*

@@ -9,3 +9,9 @@ EMAIL_SERVER = 'smtp.gmail.com:587'
 
 # pretrained_models
 MODELS_PATH = '/path/to/pretrained/models'
+
+# datasets path
+DATASETS_PATH = '/path/to/datasets'
+
+# forecastio API key
+FORECASTIO_API_KEY = 'insert-api-key-here'
