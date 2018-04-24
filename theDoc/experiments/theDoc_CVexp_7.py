@@ -3,10 +3,47 @@
 
 # In[1]:
 
-import theDoc_expTools
+import random
+from keras.regularizers import l2, l1
+import pandas as pd
 
-datamaster = theDoc_expTools.DataMaster()
+from theDoc.experiments import theDoc_expTools
+from theDoc import settings
 
+
+## set version ##
+
+VERSION = '7.0.5'
+
+datamaster = theDoc_expTools.DataMaster(version=VERSION, expdir='{}/experiments/outcomes/'.format(settings.base_pkg_path))
+
+print('Data init complete')
+
+#### hyperparameters ####
+
+hyp = {}
+hyp['learning_rate'] = random.uniform(0.0005,0.02)
+hyp['momentum'] = None #random.uniform(0.0,0.6)
+hyp['batch_size'] = random.choice([32,64,128])
+hyp['loss_weights'] = [{
+                         'dummyscore': random.uniform(0.2,1)
+                        ,'dummydif':       random.uniform(0.2,1)
+                        ,'dummytots':      random.uniform(0.2,1)
+                        ,'winner':         random.uniform(0.2,1)
+                      }]
+hyp['num_hiddenunits'] = random.randint(64,2048)
+hyp['num_hiddenlayers'] = random.choice([2,3,5,7])
+hyp['dropout'] = random.uniform(0.35,0.5)
+hyp['non_linearity'] = random.choice(['relu','tanh'])
+hyp['weight_decay'] = l2(random.uniform(0.0000,0.001))
+
+hyp['num_ensemblemodels'] = 4
+
+print(hyp,'\n')
+
+datamaster.hyp = hyp
+
+#### ####
 
 
 # In[2]:
@@ -114,60 +151,11 @@ exp_outcomes_all_columns = [
 
 # In[3]:
 
-import random
-from keras.regularizers import l2, l1
-import pandas as pd
-from keras.activations import elu
-
-def selu(x):
-    """Scaled Exponential Linear Unit. (Klambauer et al., 2017)
-    # Arguments
-        x: A tensor or variable to compute the activation function for.
-    # References
-        - [Self-Normalizing Neural Networks](https://arxiv.org/abs/1706.02515)
-    """
-    alpha = 1.6732632423543772848170429916717
-    scale = 1.0507009873554804934193349852946
-    return scale * elu(x, alpha)
 
 
-
-
-
-
-
-datamaster.version = '7.0.4'
-datamaster.expdir = 'theDoc_cvExperiments/Neural Nets/Experiment 3 - MLP/'
-
-
-#### hyperparameters ####
-
-hyp = {}
-hyp['learning_rate'] = random.uniform(0.05,0.2)
-hyp['momentum'] = random.uniform(0.0,0.6)
-hyp['batch_size'] = random.choice([32,64,128])
-hyp['loss_weights'] = [{
-                         'dummyscore': random.uniform(1,1)
-                        ,'dummydif':       random.uniform(1.2,1.2)
-                        ,'dummytots':      random.uniform(1,1)
-                        ,'winner':         random.uniform(1,1)
-                      }]
-hyp['num_hiddenunits'] = random.randint(128,128)
-hyp['num_hiddenlayers'] = random.choice([5])
-hyp['dropout'] = random.uniform(0.35,0.5)
-hyp['non_linearity'] = random.choice(['relu','tanh'])
-hyp['weight_decay'] = l2(random.uniform(0.0000,0.0000))
-
-hyp['num_ensemblemodels'] = 4
-
-print(hyp,'\n')
-
-datamaster.hyp = hyp
-
-#### ####
 
 kfold = theDoc_expTools.kfold_cv()
-kfold.run_kfold_cv(datamaster,n_splits=6)
+kfold.run_kfold_cv(datamaster,n_splits=2)
 
 kfold.money_df = kfold.money_df.sample(frac=1)
 kfold.dummytots_df = kfold.dummytots_df.sample(frac=1)
