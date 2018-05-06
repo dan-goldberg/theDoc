@@ -938,7 +938,8 @@ def anal_batter_counting():
 
             GROUP BY
             @analdate,
-            a.batter
+            a.batter,
+            p.pname
 
             HAVING COUNT(DISTINCT CASE WHEN (YEAR(@analdate) <= YEAR(a.game_date + interval '2' year) AND a.game_date <= @analdate) = 1 THEN concat(a.gid,a.ab_num) END) > 0
 
@@ -990,7 +991,7 @@ def anal_batter_rate():
         
         
         query3 = ("""
-        INSERT INTO anal_batter_rate 
+        INSERT IGNORE INTO anal_batter_rate 
         SELECT DISTINCT
 
         anal_game_date,
@@ -1601,7 +1602,8 @@ def anal_pitcher_counting_ab():
 
             GROUP BY
             @analdate,
-            a.pitcher
+            a.pitcher,
+            player.pname
 
             HAVING COUNT(DISTINCT CASE WHEN (YEAR(@analdate) <= YEAR(a.game_date + interval '2' year) AND a.game_date <= @analdate) = 1 THEN concat(a.gid,a.ab_num) END) > 0
 
@@ -2058,7 +2060,7 @@ def anal_pitcher_rate():
         
         
         query3 = ("""
-            INSERT INTO anal_pitcher_rate
+            INSERT IGNORE INTO anal_pitcher_rate
 
             SELECT DISTINCT
 
@@ -2794,7 +2796,8 @@ def anal_team_counting_off():
 
             GROUP BY
             @analdate,
-            CASE WHEN a.home_bat_fl = 0 THEN g.away_id ELSE g.home_id END
+            team_id_off,
+            team_name_off
 
             HAVING COUNT(DISTINCT CASE WHEN (YEAR(@analdate) = YEAR(a.game_date) AND a.game_date <= @analdate) = 1 THEN a.gid END) > 0
             ;
@@ -3069,7 +3072,8 @@ def anal_team_counting_def():
 
             GROUP BY
             @analdate,
-            CASE WHEN a.home_bat_fl = 1 THEN g.away_id ELSE g.home_id END
+            team_id_def,
+            team_name_def
 
             HAVING COUNT(DISTINCT CASE WHEN (YEAR(@analdate) = YEAR(a.game_date) AND a.game_date <= @analdate) = 1 THEN a.gid END) > 0
             
@@ -3114,7 +3118,7 @@ def anal_team_rate():
         
         query3 = ("""
         
-            INSERT INTO anal_team_rate
+            INSERT IGNORE INTO anal_team_rate
 
             SELECT DISTINCT
 
@@ -3385,6 +3389,7 @@ def anal_team_rate():
 
             WHERE d.anal_game_date_def = @analdate + interval '1' day
             AND o.anal_game_date_off = @analdate + interval '1' day
+            
         """)   
 
         curA.execute(query3)
