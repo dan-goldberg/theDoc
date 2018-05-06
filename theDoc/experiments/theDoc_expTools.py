@@ -4,9 +4,7 @@ import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import theDoc_dataset
 import os
-import mlb_analtablesupdate as mlbtab
 
 from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation, normalization, recurrent, Input, wrappers, Masking, core
@@ -30,6 +28,10 @@ from sklearn import linear_model
 from sklearn import metrics
 import sklearn.preprocessing as preprocessing
 import sklearn.feature_extraction as feature_extraction
+
+from theDoc.database import mlb_analtablesupdate as mlbtab
+from theDoc.preprocessing import theDoc_dataset
+from theDoc import settings
 
 
 
@@ -145,7 +147,10 @@ class GameResults:
 
 class DataMaster:
 
-    def __init__(self, datafilepath='/users/dangoldberg/theDoc_datasets/completedataset20170620.csv'):
+    def __init__(self, version, expdir, datafilepath='{}/completedataset2018-04-08.csv'.format(settings.DATASETS_PATH)):
+        
+        self.version = version
+        self.expdir = expdir
 
         qry = theDoc_dataset.query(training_gids_str='all')
 
@@ -227,7 +232,7 @@ class DataMaster:
         df = df.set_index(gamedateindex)
 
         #df = df.drop(["gid","game_date","to_drop"],axis=1)
-        df = df.drop(["to_drop"],axis=1)
+        #df = df.drop(["to_drop"],axis=1)
         df = df.drop("Unnamed: 0",axis=1)
 
         #df = df[:datetime.date(2016,10,2)]
@@ -809,8 +814,8 @@ class kfold_cv():
                 model = Model(inputs=inputlayers,outputs=[output_dummyhomescore, output_dummyawayscore,output_dummyruns,output_dummytots,output_winner])
 
                 model.compile(loss='categorical_crossentropy',
-                              #optimizer=Adam(lr=datamaster.hyp['learning_rate'], beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.001)
-                              optimizer=SGD(lr=datamaster.hyp['learning_rate'], decay=0.001, momentum=datamaster.hyp['momentum'])
+                              optimizer=Adam(lr=datamaster.hyp['learning_rate'], beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.001)
+                              #optimizer=SGD(lr=datamaster.hyp['learning_rate'], decay=0.001, momentum=datamaster.hyp['momentum'])
                               ,metrics=['accuracy']
                               ,loss_weights=datamaster.hyp['loss_weights'][0]
                              )
@@ -893,15 +898,14 @@ class kfold_cv():
 
                 # Load Optimal Epoch
 
-
                 minepoch = np.argmin(hist.history['val_loss'])
-                minepoch_sum = np.argmin(np.array(hist.history['val_dummyscore_loss_1'])+np.array(hist.history['val_dummyscore_loss_2'])+np.array(hist.history['val_dummydif_loss'])+np.array(hist.history['val_dummytots_loss'])+np.array(hist.history['val_winner_loss']))
+                minepoch_sum = np.argmin(np.array(hist.history['val_dummyscore_loss']) + np.array(hist.history['val_dummydif_loss']) + np.array(hist.history['val_dummytots_loss']) + np.array(hist.history['val_winner_loss']))
                 
                 custepoch = 0
                 if custepoch != 0:
                     loadepoch = custepoch
                 else:
-                    loadepoch = minepoch
+                    loadepoch = minepoch + 1
 
                 if loadepoch < 10:
                     loadepochstr = str(0)+str(loadepoch)
@@ -1198,7 +1202,7 @@ def betting_analysis(kfold_cv, rides=[1]):
             idxmax = exp_outcomes.idxmax(axis=0)
             
             exp_outcomes = exp_outcomes.T.reset_index(drop=True)
-            exp_outcomes.columns = [bet_dfname + '_' + s.astype(str) for s in exp_outcomes.columns]
+            exp_outcomes.columns = [bet_dfname + '_' + str(s) for s in exp_outcomes.columns]
             exp_outcomes[bet_dfname+'_valmax'] = valmax['uni_p']
             exp_outcomes[bet_dfname+'_idxmax'] = idxmax['uni_p']
             exp_outcomes[bet_dfname+'_allpred_payout'] = allpred_payout

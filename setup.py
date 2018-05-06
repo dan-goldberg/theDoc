@@ -14,7 +14,7 @@ setup(
     license='',
     packages=[package for package in find_packages() if package.startswith('theDoc')],
     install_requires=[
-        'numpy','pandas','matplotlib','beautifulsoup4','tensorflow-gpu','keras','scikit-learn','scipy','python-forecastio'
+        'numpy','pandas','matplotlib','beautifulsoup4','lxml','tensorflow-gpu','keras','scikit-learn','scipy','python-forecastio'
     ],
     extras_require={
         'notebooks':['jupyterlab']
