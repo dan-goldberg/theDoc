@@ -393,6 +393,29 @@ class query:
             'groundballs_pa_std3_lh',
             'linedrives_pa_std3_lh'
             ]
+        
+        self.batterpa_columnarray = [
+            'pa_last10',
+            'pa_last30',
+            'pa_last60',
+            'pa_std',
+            'pa_std2',
+            'pa_std3',
+
+            'pa_last10_rh',
+            'pa_last30_rh',
+            'pa_last60_rh',
+            'pa_std_rh',
+            'pa_std2_rh',
+            'pa_std3_rh',
+
+            'pa_last10_lh',
+            'pa_last30_lh',
+            'pa_last60_lh',
+            'pa_std_lh',
+            'pa_std2_lh',
+            'pa_std3_lh',
+        ]
 
         self.sides = ['home','away']
         self.batpositions = ['1','2','3','4','5','6','7','8','9']
@@ -791,7 +814,14 @@ class query:
             #'lastmodifieddate',
             #'autoincrement_PK'
             ]
-
+        
+        self.pitcherpa_columnarray = [
+            'pa_last20',
+            'pa_last60',
+            'pa_std',
+            'pa_std2',
+            'pa_std3'
+        ]
 
         self.team_columnarray_off = [
 
@@ -981,23 +1011,31 @@ class query:
         self.teams_joins = ''
         self.batterhands = ''
         self.pitcherhands = ''
+        self.batter_pas = ''
+        self.pitcher_pas = ''
     
         for side in self.sides:
             for batpos in self.batpositions:
 
-                self.batters_joins += "LEFT JOIN anal_batter_rate AS anal_batter_rate_"+side+"_"+batpos+" ON anal_batter_rate_"+side+"_"+batpos+".anal_game_date = g.game_date AND anal_batter_rate_"+side+"_"+batpos+".batter = anal_startinglineup."+side+"_"+batpos+"_id_ "
+                self.batters_joins += """LEFT JOIN anal_batter_rate AS anal_batter_rate_"""+side+"""_"""+batpos+""" ON anal_batter_rate_"""+side+"""_"""+batpos+""".anal_game_date = g.game_date AND anal_batter_rate_"""+side+"""_"""+batpos+""".batter = anal_startinglineup."""+side+"""_"""+batpos+"""_id_ LEFT JOIN anal_batter_counting AS anal_batter_counting_"""+side+"""_"""+batpos+""" ON anal_batter_counting_"""+side+"""_"""+batpos+""".anal_game_date = g.game_date AND anal_batter_counting_"""+side+"""_"""+batpos+""".batter = anal_startinglineup."""+side+"_"""+batpos+"_id_ """
 
                 for col in self.batter_columnarray:
                     line = "anal_batter_rate_"+side+"_"+batpos+"."+col+" as "+col+"_"+side+"_"+batpos+","
                     self.batters += line
                 for col in self.batterhands_columnarray:
                     line = "anal_startinglineup."+side+"_"+batpos+"_"+col+" as "+col+"_"+side+"_"+batpos+","
-                    self.batterhands += line    
+                    self.batterhands += line
+                for col in self.batterpa_columnarray:
+                    line = "anal_batter_counting_"+side+"_"+batpos+"."+col+" as "+col+"_"+side+"_"+batpos+","
+                    self.batter_pas += line
 
             self.pitchers_joins += ("""
                     LEFT JOIN anal_pitcher_rate AS anal_pitcher_rate_"""+side+"""
                     ON anal_pitcher_rate_"""+side+""".anal_game_date = g.game_date
                     AND anal_pitcher_rate_"""+side+""".pitcher = anal_startinglineup."""+side+"""_sp_id_ 
+                    LEFT JOIN anal_pitcher_counting_p AS anal_pitcher_counting_p_"""+side+"""
+                    ON anal_pitcher_counting_p_"""+side+""".anal_game_date = g.game_date
+                    AND anal_pitcher_counting_p_"""+side+""".pitcher = anal_startinglineup."""+side+"""_sp_id_ 
                     """)
             
             for col in self.pitcher_columnarray:
@@ -1006,6 +1044,9 @@ class query:
             for col in self.pitcherhands_columnarray:
                 line = "anal_startinglineup."+side+"_sp_"+col+" as "+col+"_"+side+"_sp,"
                 self.pitcherhands += line
+            for col in self.pitcherpa_columnarray:
+                line = "anal_pitcher_counting_p_"+side+"."+col+" as "+col+"_"+side+"_sp,"
+                self.pitcher_pas += line
                 
         
             self.teams_joins += "LEFT JOIN anal_team_rate AS anal_team_rate_"+side+" ON anal_team_rate_"+side+".anal_game_date = g.game_date AND anal_team_rate_"+side+".team_id = g."+side+"_id "
@@ -1050,7 +1091,7 @@ class query:
                 forecastio_weather.precipType_rain,
                 forecastio_weather.precipType_snow,
                 forecastio_weather.precipType_sleet,
-                """+self.batters+self.batterhands+self.pitchers+self.pitcherhands+self.teams+"""NULL AS to_drop 
+                """+self.batters+self.batterhands+self.batter_pas+self.pitchers+self.pitcherhands+self.pitcher_pas+self.teams+"""NULL AS to_drop 
                 FROM anal_game AS g JOIN anal_startinglineup ON anal_startinglineup.game_date = g.game_date 
                 AND anal_startinglineup.gid = g.gid """+self.batters_joins+self.pitchers_joins+self.teams_joins+""" 
                 JOIN forecastio_weather ON forecastio_weather.gid = g.gid
@@ -1099,7 +1140,7 @@ class query:
                 forecastio_weather.precipType_rain,
                 forecastio_weather.precipType_snow,
                 forecastio_weather.precipType_sleet,
-                """+self.batters+self.batterhands+self.pitchers+self.pitcherhands+self.teams+"""NULL AS to_drop 
+                """+self.batters+self.batterhands+self.batter_pas+self.pitchers+self.pitcherhands+self.pitcher_pas+self.teams+"""NULL AS to_drop 
                 FROM anal_game AS g JOIN anal_startinglineup ON anal_startinglineup.game_date = g.game_date 
                 AND anal_startinglineup.gid = g.gid """+self.batters_joins+self.pitchers_joins+self.teams_joins+""" 
                 JOIN forecastio_weather ON forecastio_weather.gid = g.gid
@@ -1146,7 +1187,7 @@ class query:
                 forecastio_weather.precipType_rain,
                 forecastio_weather.precipType_snow,
                 forecastio_weather.precipType_sleet,
-                """+self.batters+self.batterhands+self.pitchers+self.pitcherhands+self.teams+"""NULL AS to_drop 
+                """+self.batters+self.batterhands+self.batter_pas+self.pitchers+self.pitcherhands+self.pitcher_pas+self.teams+"""NULL AS to_drop 
                 FROM anal_game AS g JOIN anal_startinglineup ON anal_startinglineup.game_date = g.game_date 
                 AND anal_startinglineup.gid = g.gid """+self.batters_joins+self.pitchers_joins+self.teams_joins+""" 
                 JOIN forecastio_weather ON forecastio_weather.gid = g.gid

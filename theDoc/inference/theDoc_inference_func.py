@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn import preprocessing
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from theDoc.preprocessing import theDoc_dataset
+from theDoc.preprocessing import theDoc_dataset, roll_up_stats
 from theDoc.database import mlb_analtablesupdate as mlbtab
 from theDoc.models.theDoc_models import DocModels
 from theDoc.utils import emailSend
@@ -32,7 +32,7 @@ def run_inference(inference_gids_str):
     for side in qry.sides:
 
         pitchers = []
-        for col in qry.pitcher_columnarray + qry.pitcherhands_columnarray:
+        for col in qry.pitcher_columnarray + qry.pitcherhands_columnarray + qry.pitcherpa_columnarray:
             line = col+"_"+side+"_sp"
             pitchers.append(line)
 
@@ -40,7 +40,7 @@ def run_inference(inference_gids_str):
 
         batters = []
         for batpos in qry.batpositions:
-            for col in qry.batter_columnarray + qry.batterhands_columnarray:
+            for col in qry.batter_columnarray + qry.batterhands_columnarray + qry.batterpa_columnarray:
                 line = col+"_"+side+"_"+batpos
                 batters.append(line)
 
@@ -113,22 +113,17 @@ def run_inference(inference_gids_str):
     cnx.close()
 
     filename = '{}/inference{}.csv'.format(settings.DATASETS_PATH, str(datetime.datetime.now().date()))
-    rawdata.to_csv(filename)
-    del rawdata
 
-    df = pd.read_csv(filename)
-    os.remove(filename)
-
+    df = rawdata
     df = df.set_index("gid",drop=False)
     df = df.loc[~df.index.duplicated(keep='last')]
 
-    tuples = list(zip(df["game_date"].apply(datetime.datetime.strptime,args=(["%Y-%m-%d"])),df["gid"]))
+    tuples = list(zip(df["game_date"],df["gid"]))
     target_gamedateindex = pd.MultiIndex.from_tuples(tuples,names=['game_date','gid'])
     df = df.set_index(target_gamedateindex)
 
     #df = df.drop(["gid","game_date","to_drop"],axis=1)
     df = df.drop(["to_drop"],axis=1)
-    df = df.drop("Unnamed: 0",axis=1)
     df = df.drop(['game_date','gid'],axis=1)
 
     #df = df[:datetime.date(2016,10,2)]
@@ -140,10 +135,25 @@ def run_inference(inference_gids_str):
 
     df['is_target'] = 1
 
+    # Rollup stats to account for small sample sizes, and reflect training data
+    batterRollup = roll_up_stats.RollupFactory(kind='batter').make_rollup()
+    pitcherRollup = roll_up_stats.RollupFactory(kind='pitcher').make_rollup()
+    for side in ['home','away']:
+        for batter_position in ['1','2','3','4','5','6','7','8','9']:
+            batterRollup.rollup(df, side=side, detail=batter_position)
+            to_drop = ["pa_{}_{}_{}".format(bucket, side, batter_position) for bucket in batterRollup.target_buckets]
+            df = df.drop(to_drop,axis=1)
+            for dropping in to_drop:
+                columnlist[side]["batters"].remove(dropping)
+        for pitcher_position in ['sp']:
+            pitcherRollup.rollup(df, side=side, detail=pitcher_position)
+            to_drop = ["pa_{}_{}_{}".format(bucket, side, pitcher_position) for bucket in pitcherRollup.target_buckets]
+            df = df.drop(to_drop,axis=1)
+            for dropping in to_drop:
+                columnlist[side]["sp"].remove(dropping)
 
 
-
-    temp_training_dataset = pd.read_csv('{}/completedataset20170620.csv'.format(settings.DATASETS_PATH))
+    temp_training_dataset = pd.read_csv('{}/completedataset2018-04-08.csv'.format(settings.DATASETS_PATH))
 
     temp_training_dataset = temp_training_dataset.set_index("gid",drop=False)
     temp_training_dataset = temp_training_dataset.loc[~temp_training_dataset.index.duplicated(keep='last')]
@@ -154,7 +164,7 @@ def run_inference(inference_gids_str):
     temp_training_dataset = temp_training_dataset.sort_index()
 
     #df = df.drop(["gid","game_date","to_drop"],axis=1)
-    temp_training_dataset = temp_training_dataset.drop(["to_drop"],axis=1)
+    #temp_training_dataset = temp_training_dataset.drop(["to_drop"],axis=1)
     temp_training_dataset = temp_training_dataset.drop("Unnamed: 0",axis=1)
     temp_training_dataset = temp_training_dataset.drop(['game_date','gid'],axis=1)
 
@@ -254,6 +264,14 @@ def run_inference(inference_gids_str):
     #Encoding Categoricals
 
     encoding_set = pd.concat([cat_df,cat_temp_training_dataset],axis=0)
+    
+    def cast_to_type(df, col, type_func):
+        if df[col] is None:
+            return None
+        else:
+            return type_func(df[col])
+    # cast stadium id's to int since we have some dirty data messing up the encoding
+    encoding_set["stad_id"] = encoding_set.apply(cast_to_type, axis=1, args=['stad_id',int])
 
     columnlist["general"] = columnlist["general"] + list(pd.get_dummies(encoding_set[categoricals_general],columns=categoricals_general).columns)
     columnlist["home"]["batters"] = columnlist["home"]["batters"] + list(pd.get_dummies(encoding_set[categoricals_home_batters],columns=categoricals_home_batters).columns)
@@ -344,7 +362,6 @@ def run_inference(inference_gids_str):
     X_ho["ishome"],X_ho["isaway"], X_ao["ishome"],X_ao["isaway"] = 1,0,0,1
 
     X_data = {'X_ho':np.array(X_ho),'X_ao':np.array(X_ao)}
-
 
     outcome_odds0_money = "money_home_oddsrat"
     outcome_odds1_money = "money_away_oddsrat"
